@@ -3,6 +3,18 @@
 Tarih: 23 Ekim 2026 (Türkiye).
 Bu belge konuşmadaki kararların ve yapılan işlerin kalıcı özetidir; birebir sohbet transkripti değildir. Yeni kullanıcı talimatları bu özeti güncelleyebilir.
 
+## 23 Ekim yerel devamı — güncel durum
+
+Yoklama taslağında kullanıcı açılır liste yerine doğrudan seçim istedi. Her öğrenci için Bekliyor / Katıldı / Gelmedi seçenekleri, tek seçimli ve klavyeyle kullanılabilen radio düğmeleri olarak gösterilir. Bekliyor, işaretlenmemiş durumdur; tüm öğrenciler işaretlenmeden kapanış özeti açılmaz.
+
+Kabul sonrası aynı `AttendanceDraft` bileşeni günlük program ve takvim ders ayrıntılarına bağlandı. Ders değişince yerel işaretler sıfırlanır. Mobilde taslağı açma, seçim, Escape ile kapatma/odak dönüşü ve farklı dersin temiz başlaması doğrulandı. Bu değişiklik için derleme, tip kontrolü ve beş ilgili tarayıcı testi geçti; gerçek yoklama kaydı yapılmaz.
+
+Kullanıcı mevcut sözleşmelerin izin verdiği ölçüde tasarımı ilerletmemizi, sonra özelleştirmeyi istedi. Günlük ekran + on bir gerçek tasarım sayfası, ortak kalıcı layout kabuğu, arama/filtre/ayrıntılar ve yerel işlem/durum taslakları hazırlandı. Güncel teslim [tasarım kapsamı](design-coverage.md) belgesindedir. Son doğrulama: ayrı production sunucusunda 41 tarayıcı testi; build/typecheck ve iki birim testi başarılı. Auth/backend hâlâ bağlı değil; tüm tasarım verileri sentetik.
+
+Organizasyonların kontrol edilmiş hazır renk/font paketlerini ve marka logosunu seçebilmesi, kullanıcı açık/koyu/sistem ve erişilebilirlik tercihlerinin ayrı kalması kabul edildi. Kesin paket/fontlar seçilmedi. Backend ihtiyaçları FtkSaaS mevcut entegrasyon devri ve kalan işlerine [taslak PR43](https://github.com/SXQHex/FtkSaaS/pull/43) ile kaydedildi; main'e merge veya runtime/API geliştirmesi yapılmadı. Ayrı backend sözleşme kopyası burada tutulmaz.
+
+Kullanıcı geliştirmeye başlama talimatı verdi ve ilk persona/görev olarak **merkez yöneticisi ve günlük program** seçti. Monorepo ve ilk etkileşimli tasarım önizlemesi kuruldu; ayrıntılar [ilk frontend çalışmasında](frontend-start.md). İstenen paket sürümleri doğrulanıp kuruldu. Auth/backend bağlantısı yoktur. Aşağıdaki uygulama kurulmadı ve persona seçilmedi ifadeleri ilk devir anının tarihsel durumudur; güncel kapsam için yeni belge ve README esas alınır.
+
 ## Devam eden iş ve çalışma yeri
 
 Kullanıcı geliştirmeyi bulut ortamında değil, kendi bilgisayarındaki Codex oturumunda sürdürmek istiyor. Bu deponun yerel klonunu aç; önce AGENTS.md, bu belge ve ilgili skill dosyalarını oku. Yeni konuşma eski sohbet hafızasını varsaymamalı.

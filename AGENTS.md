@@ -14,7 +14,7 @@ Read applicable skills under `.agents/skills/` before working:
 
 Upstream skill snapshots and source commits are recorded in `.agents/skills/sources.json`. Follow referenced rule files when relevant; skill guidance must be checked against the installed framework versions and current official APIs.
 
-Backend: Supabase, including Supabase Auth. No application scaffold, dependencies, database, or authentication connection has been configured yet. See the project design skill for confirmed and open decisions. Never commit credentials.
+Backend: Supabase, including Supabase Auth. The local monorepo, daily program and eleven navigable manager design sections are implemented; see `docs/design-coverage.md` for current scope, contract-operation mapping, verification and limitations. No database or authentication connection is configured. Models are presentation fixtures, not duplicated API DTOs. See the project design skill for confirmed and open decisions. Never commit credentials.
 
 ## Backend handover and frontend ownership
 
