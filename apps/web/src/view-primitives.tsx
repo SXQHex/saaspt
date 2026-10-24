@@ -4,11 +4,11 @@ import { useRef, useState, type ReactNode } from "react";
 import { Button } from "@saaspt/ui/button";
 
 export function useDetailSelection(initialId: string) {
-  const [selectedId, updateId] = useState(initialId);
+  const [selectedId, updateId] = useState<string | null>(initialId);
   const detailRef = useRef<HTMLElement>(null);
-  function setSelectedId(id: string) {
+  function setSelectedId(id: string | null) {
     updateId(id);
-    if (window.matchMedia("(max-width: 640px)").matches) {
+    if (id && window.matchMedia("(max-width: 640px)").matches) {
       requestAnimationFrame(() => {
         detailRef.current?.focus({ preventScroll: true });
         detailRef.current?.scrollIntoView({
@@ -19,6 +19,22 @@ export function useDetailSelection(initialId: string) {
     }
   }
   return { selectedId, setSelectedId, detailRef };
+}
+
+export function ReturnToList({ targetId }: { targetId: string }) {
+  return (
+    <button
+      type="button"
+      className="return-to-list"
+      onClick={() => {
+        const list = document.getElementById(targetId);
+        list?.focus({ preventScroll: true });
+        list?.scrollIntoView({ block: "start", behavior: "instant" });
+      }}
+    >
+      Ders listesine dön
+    </button>
+  );
 }
 
 export function ViewSearch({

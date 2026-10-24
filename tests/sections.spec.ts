@@ -224,3 +224,75 @@ test("mobile record selection focuses details and unknown sections return 404", 
   const response = await page.goto("/constructor");
   expect(response?.status()).toBe(404);
 });
+
+test("calendar search retains room filter and mobile return keeps context", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/takvim");
+  await page
+    .getByRole("group", { name: "Takvim salonu" })
+    .getByRole("button", { name: "Salon B", exact: true })
+    .click();
+  const search = page.getByRole("searchbox", {
+    name: "Takvimde ders veya eğitmen ara",
+  });
+  await search.fill("güç");
+  await expect(page.locator(".agenda-row")).toHaveCount(1);
+  await page.locator(".agenda-row").click();
+  await expect(
+    page.getByRole("complementary", { name: "Seans ayrıntısı" }),
+  ).toBeFocused();
+  await page.getByRole("button", { name: "Ders listesine dön" }).click();
+  await expect(
+    page.getByRole("region", { name: "Merkez takvimi" }),
+  ).toBeFocused();
+  await expect(search).toHaveValue("güç");
+  await search.fill("bulunmayan ders");
+  await expect(
+    page.getByRole("heading", { name: "Eşleşen kayıt yok." }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Filtreleri temizle" }).click();
+  await expect(search).toHaveValue("");
+  await expect(page.locator(".agenda-row")).not.toHaveCount(0);
+});
+
+test("pending-only attendance preserves marks and provides completion recovery", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/takvim");
+  await page.getByRole("button", { name: "Yoklama tasarımını aç" }).click();
+  const dialog = page.getByRole("dialog", {
+    name: "Yoklama taslağı",
+    exact: true,
+  });
+  await dialog.getByRole("checkbox", { name: "Yalnız bekleyenler" }).check();
+  for (let i = 0; i < 4; i++) {
+    const first = dialog.getByRole("group").first();
+    await first
+      .getByText(i === 3 ? "Gelmedi" : "Katıldı", { exact: true })
+      .click();
+    await expect(dialog.getByRole("progressbar")).toHaveAttribute(
+      "value",
+      String(i + 1),
+    );
+    await expect(dialog.getByRole("group")).toHaveCount(3 - i);
+  }
+  await expect(dialog.getByRole("checkbox")).toBeFocused();
+  await expect(
+    dialog.getByText("Tüm öğrenciler işaretlendi.", { exact: true }),
+  ).toBeVisible();
+  await dialog.getByRole("button", { name: "Tüm öğrencileri göster" }).click();
+  await expect(
+    dialog.getByRole("radio", { name: "Katıldı", exact: true }),
+  ).toHaveCount(4);
+  await expect(
+    dialog.getByRole("radio", { name: "Gelmedi", exact: true }).last(),
+  ).toBeChecked();
+  await dialog.getByRole("button", { name: "Kapanış özetini incele" }).click();
+  await expect(dialog.getByRole("status")).toBeFocused();
+  await expect(dialog.getByRole("status")).toContainText(
+    "3 katıldı, 1 gelmedi",
+  );
+});

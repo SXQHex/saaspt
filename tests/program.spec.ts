@@ -163,7 +163,14 @@ test("daily attendance shares direct choices and resets for another lesson", asy
   await expect(
     page.getByRole("button", { name: "Yoklama tasarımını aç" }),
   ).toBeFocused();
+  await page.getByRole("button", { name: "Ders listesine dön" }).click();
+  await expect(
+    page.getByRole("region", { name: "Ders programı" }),
+  ).toBeFocused();
   await page.getByRole("button", { name: /Güç ve denge/ }).click();
+  await expect(
+    page.getByRole("complementary", { name: "Ders ayrıntısı" }),
+  ).toBeFocused();
   await page.getByRole("button", { name: "Yoklama tasarımını aç" }).click();
   await expect(dialog).toContainText("Güç ve denge");
   await expect(dialog).toContainText("0 / 4 sonuç işaretlendi.");

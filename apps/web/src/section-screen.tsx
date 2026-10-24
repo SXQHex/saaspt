@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { sectionConfig, type Section } from "./section-config";
 import { CalendarView, PeopleView } from "./operations-views";
+import { SettingsView } from "./settings-view";
 import { FinanceView, PackagesView, EventsView } from "./commerce-views";
 import {
   LeadsView,
   DocumentsView,
   ReportsView,
-  SettingsView,
   EarningsView,
   NotificationsView,
 } from "./management-views";

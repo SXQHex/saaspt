@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "@saaspt/ui/button";
 import { filterSessions, type DemoSession } from "./demo-program";
 import { ManagerPriorities } from "./manager-priorities";
 import { AttendanceDraft } from "./attendance-draft";
+import { ReturnToList, useDetailSelection } from "./view-primitives";
 
 function Arrow({ reverse = false }: { reverse?: boolean }) {
   return (
@@ -27,8 +28,7 @@ export function ProgramPreview() {
   const [day, setDay] = useState(23);
   const [room, setRoom] = useState("all");
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>("demo-3");
-  const detailRef = useRef<HTMLElement>(null);
+  const { selectedId, setSelectedId, detailRef } = useDetailSelection("demo-3");
   function inspectSession(id: string) {
     setDay(23);
     setRoom("all");
@@ -208,6 +208,7 @@ export function ProgramPreview() {
         >
           {selected ? (
             <>
+              <ReturnToList targetId="daily-schedule" />
               <div className="detail-top">
                 <span>Ders ayrıntısı</span>
                 <button

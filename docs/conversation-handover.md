@@ -3,7 +3,17 @@
 Tarih: 23 Ekim 2026 (Türkiye).
 Bu belge konuşmadaki kararların ve yapılan işlerin kalıcı özetidir; birebir sohbet transkripti değildir. Yeni kullanıcı talimatları bu özeti güncelleyebilir.
 
+## 24 Ekim — ayarlar UX devamı
+
+Kullanıcı sözleşmeler kapsamında UX'e devam edilmesini istedi. Backend kaynak indeksi, güncel devir, kalan işler, Claude devri ve teknik sözleşmenin ayarlar bölümü GitHub main'den yeniden okundu. Yeni settings API/DTO/runtime geliştirmesinin durdurulması korunur; görünüm prototipi ve gerçek kayıt ayrı tutulur.
+
+Ayarlar için ayrı `settings-view.tsx` eklendi. Organizasyon/merkez/kişisel kapsamda etki açıklaması değişir. Marka ve kişisel görünüm kendi kapsamlı panellerinden denenir; üstteki ortak panelle aynı AppShell durumunu kullanır. Sayfa yenilenince sıfırlanır; diğer hesaplara yazılmaz. Birden fazla panelin etiket/id çakışmasını önlemek için useId kullanıldı. Mevcut API alanına paralel yerel görünen ad taslağı boş ad kontrolü, mevcut/önerilen değer incelemesi ve geri alma içerir; hesap adı gerçekten değişmez. Fotoğraf/hitap/iletişim veya güvenlik komutları eklenmedi. Merkezden takvim/belgelere gerçek tasarım bağlantıları var. İletişim, hesap bağı ve giriş/oturum açıklamaları işlemsiz bilgi alanlarıdır.
+
+Doğrulama: production derlemesi ve 49 Playwright testi geçti. Beş yeni ayarlar testi; marka/kişisel seçim ayrımı, benzersiz id'ler, profil taslağı/odak/geri alma, merkez bağlantısı ve 320px RTL kapsamını kontrol eder. Mobil/masaüstü ekran görüntüleri incelendi. İlk frontend teslimi a1e36f2 ile GitHub codex/frontend-start dalına gönderilmişti; sonraki takvim/yoklama ve bu ayarlar UX değişiklikleri henüz commit edilmedi.
+
 ## 23 Ekim yerel devamı — güncel durum
+
+UX devamı: günlük programda mobil ders seçimi ayrıntıya odaklanır; günlük/takvim ayrıntısından Ders listesine dön ile filtreleri koruyarak listeye dönülür. Takvim ders/eğitmen/disiplin araması salon/gün filtreleriyle birleşir ve boş sonuçtan temizlemeyle toparlanır. Yoklama ilerlemesi, katıldı/gelmedi/bekleyen sayıları ve yalnız bekleyenler filtresi eklendi. Filtrede işaretlenen satır çıkınca odak sıradaki öğrenciye, son öğrenci sonrası filtreye döner. Tüm öğrencileri göster ile seçimler korunur; özet açılınca odak özete taşınır. Bu değişikliklerin production derlemesinde 44 tarayıcı testi geçti. Gerçek kayıt/iş kuralı değişmedi.
 
 Yoklama taslağında kullanıcı açılır liste yerine doğrudan seçim istedi. Her öğrenci için Bekliyor / Katıldı / Gelmedi seçenekleri, tek seçimli ve klavyeyle kullanılabilen radio düğmeleri olarak gösterilir. Bekliyor, işaretlenmemiş durumdur; tüm öğrenciler işaretlenmeden kapanış özeti açılmaz.
 

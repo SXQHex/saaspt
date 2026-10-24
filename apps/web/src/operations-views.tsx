@@ -7,6 +7,7 @@ import { AttendanceDraft } from "./attendance-draft";
 import { people, money } from "./design-data";
 import {
   useDetailSelection,
+  ReturnToList,
   ViewSearch,
   FilterButtons,
   EmptyView,
@@ -19,12 +20,16 @@ import {
 export function CalendarView() {
   const [day, setDay] = useState("23 Ekim");
   const [room, setRoom] = useState("Tüm salonlar");
+  const [query, setQuery] = useState("");
   const { selectedId, setSelectedId, detailRef } = useDetailSelection("demo-3");
   const [view, setView] = useState("Zaman çizelgesi");
   const data = sessions.filter(
     (item) =>
       item.day === (day === "23 Ekim" ? 23 : 24) &&
-      (room === "Tüm salonlar" || `Salon ${item.room}` === room),
+      (room === "Tüm salonlar" || `Salon ${item.room}` === room) &&
+      `${item.title} ${item.instructor} ${item.discipline}`
+        .toLocaleLowerCase("tr-TR")
+        .includes(query.trim().toLocaleLowerCase("tr-TR")),
   );
   const selected = data.find((item) => item.id === selectedId);
   return (
@@ -49,8 +54,20 @@ export function CalendarView() {
         value={room}
         onChange={setRoom}
       />
+      <ViewSearch
+        label="Takvimde ders veya eğitmen ara"
+        value={query}
+        onChange={setQuery}
+      />
+      <p className="scope-note" aria-live="polite">
+        {data.length} ders gösteriliyor.
+      </p>
       <div className="view-split calendar-split">
-        <section aria-label="Merkez takvimi">
+        <section
+          id="calendar-schedule"
+          tabIndex={-1}
+          aria-label="Merkez takvimi"
+        >
           <p className="section-caption">{day} 2026 · İstanbul saati</p>
           <div
             className={`calendar-grid ${view === "Ajanda" ? "calendar-hidden" : ""}`}
@@ -107,6 +124,7 @@ export function CalendarView() {
               onReset={() => {
                 setDay("23 Ekim");
                 setRoom("Tüm salonlar");
+                setQuery("");
               }}
             />
           ) : null}
@@ -119,6 +137,7 @@ export function CalendarView() {
         >
           {selected ? (
             <>
+              <ReturnToList targetId="calendar-schedule" />
               <StateTag>Planlandı</StateTag>
               <h2>{selected.title}</h2>
               <InfoPairs

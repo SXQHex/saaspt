@@ -1,6 +1,6 @@
 # Mevcut sözleşmelerle tasarım kapsamı
 
-23 Ekim 2026. Frontend kaynağı saaspt yerel `codex/frontend-start` dalıdır; bu teslim henüz commit/push edilmedi. Backend kaynak kontrolü: [FtkSaaS 702063807b0a0d09f559f070ffde1b1ae3e7563b](https://github.com/SXQHex/FtkSaaS/tree/702063807b0a0d09f559f070ffde1b1ae3e7563b).
+24 Ekim 2026. Frontend kaynağı saaspt yerel `codex/frontend-start` dalıdır. İlk teslim `a1e36f2` ile GitHub'a gönderildi; sonraki takvim/yoklama ve ayarlar UX değişiklikleri henüz commit edilmedi. Backend kaynak kontrolü: [FtkSaaS 702063807b0a0d09f559f070ffde1b1ae3e7563b](https://github.com/SXQHex/FtkSaaS/tree/702063807b0a0d09f559f070ffde1b1ae3e7563b).
 
 Bu belge frontend tasarım tesliminin haritasıdır; backend sözleşmesinin paralel kopyası veya API uygulama kabulü değildir. Ürün kapsamı, durum/izin belgesi, entegrasyon devri ve endpoint envanteri incelendi. Aşağıdaki 52 farklı operasyon adı yayımlanmış envanterde kontrol edildi; her Request/Response alanının gerçek istemciye bağlandığı iddia edilmez. Frontend henüz Auth/API/veritabanına bağlı değildir.
 
@@ -19,7 +19,7 @@ Bu belge frontend tasarım tesliminin haritasıdır; backend sözleşmesinin par
 | `/raporlar` | Güne göre planlama/kayıt doluluğu, ayrı bakiye kesiti, dışa aktarım iş yaşam döngüsü anlatımı | report_get_v1, report_export_start_v1, job_status_get_v1, report_file_get_v1 |
 | `/hakedisler` | Eğitmen seçimi, sabitlenmiş değerleme, hakediş/ödeme ayrımı | instructor_agreements_list_v1, earnings_list_v1, instructor_payment_record_v1 |
 | `/bildirimler` | Kendi uygulama içi inbox örneği, yeni/okundu filtreleri, ilgili sayfaya geçiş | notifications_list_v1, notification_mark_read_v1 |
-| `/ayarlar` | Organizasyon/merkez/kişisel kapsam ayrımı, görünen ad taslağı, API'si eksik marka ve tercih alanlarının işaretlenmesi | organization_get_v1, centers_list_v1, policies_get_v1, account_get_v1, management_state_get_v1, account_profile_update_v1 |
+| `/ayarlar` | Organizasyon/merkez/kişisel etki alanı, bağımsız marka/kişisel görünüm önizlemeleri, görünen ad doğrulama/inceleme/geri alma taslağı, bağlı olmayan güvenlik alanlarının açıklanması | organization_get_v1, centers_list_v1, policies_get_v1, account_get_v1, management_state_get_v1, account_profile_update_v1 |
 
 Operasyonların listelenmesi ilgili ekrandaki her alan için tek bir hazır projeksiyon bulunduğu anlamına gelmez. Özellikle çapraz kişi/bakiye/hak görünümü ve belge/sürüm listesinde kesin read projection/alan görünürlüğü/izin analizi gerçek entegrasyon işidir. Yalnız frontend view model'leri kullanıldı; bağımsız API DTO veya mock endpoint yazılmadı.
 
@@ -35,6 +35,10 @@ Operasyonların listelenmesi ilgili ekrandaki her alan için tek bir hazır proj
 - Rapor kayıt yeri sayısını tekil kişi veya gerçekleşmiş katılım diye sunmaz. Bakiye, dönem geliri/kasa olarak etiketlenmez. Hayali export dosyası veya job sonucu üretilmez.
 - Owner/CM/OM izinleri canlı bağlanmadı. Demo yönetici menüsü gerçek yetki veya plan kanıtı değildir. Settings sprintinin durdurulması korunur; yeni runtime/DTO/izin anahtarı oluşturulmadı.
 
+## Ayarlar UX sınırı
+
+24 Ekim'de backend kaynak indeksi, devir/kalan işler/Claude talimatları ve teknik sözleşmenin S01–S10 ayarlar bölümü GitHub main üzerinden yeniden okundu. Görünüm yerel tasarımı izinli; yeni settings runtime/DTO geliştirmesi durdurulmuş durumda. Gerçek profil yazması yalnız display_name ile sınırlı ve management sürüm kaynağı gerektirir; buradaki form yalnız yerel incelemedir. Renk/font ve kişisel görünüm AppShell içinde paylaşılır; hesap/org tercihi saklama veya senkronizasyonu uygulanmadı. Kalıcı kayıt, logo yükleme, kimlik/iletişim, giriş yöntemleri ve oturum yönetimi çalışan işlem olarak sunulmaz.
+
 ## Ortak deneyim
 
 AppShell kök layout'ta ortak tutulur. Tema, font, kişisel görünüm, RTL ve daraltılmış menü client gezinmesinde korunur; sayfa yenilendiğinde başlangıca döner. Gerçek sayfa URL'leri ve aktif menü vardır. Mobil Daha menüsü sayfa seçilince kapanır. Küçük ekranda kayıt seçimi ilgili ayrıntıya odaklanır ve sabit başlığı hesaba katar.
@@ -44,7 +48,7 @@ Her bölümde yerel tasarım seçicisiyle içerik/yükleniyor/boş/erişim yok/b
 ## Kontroller ve açık işler
 
 - Production build: günlük ekran + 11 bölüm, statik çıktı başarılı. Typecheck ve iki Vitest testi geçti.
-- Ayrı localhost:3002 production sunucusunda 41 Playwright testi tek koşuda başarılı. Test komutu artık önce build alır ve açık development önizlemesini yeniden kullanmaz. İlk development denemelerindeki geçiş/panel zaman aşımları başarılı kabul diye sayılmadı.
+- Güncel UX devamıyla ayrı localhost:3002 production sunucusunda 49 Playwright testi tek koşuda başarılı. Test komutu artık önce build alır ve açık development önizlemesini yeniden kullanmaz. İlk development denemelerindeki geçiş/panel zaman aşımları başarılı kabul diye sayılmadı.
 - 390px ve 1440px'te bütün bölümler: 200 yanıtı, başlık, sentetik veri notu, yatay sayfa taşması ve pageerror kontrolü. Ana akışlar, bağımsız tema durumu, aktif menü, mobil odak, yoklama özeti, tahsilatın bakiyeyi değiştirmemesi, erişim durumu ve bilinmeyen route için 404 kontrol edildi.
 - Masaüstü/mobil tarayıcı ekran görüntüleri görsel incelendi. Bu, bütün erişilebilirlik ve gerçek backend kabulünün tamamlandığı anlamına gelmez.
 
