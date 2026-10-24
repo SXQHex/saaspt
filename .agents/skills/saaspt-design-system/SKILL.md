@@ -7,6 +7,10 @@ description: Project-specific design direction for SaaSPT frontend work, includi
 
 ## Confirmed direction
 
+- The user accepted task-led management: explain what needs attention today and the consequences before an impactful action. Use compact tables when comparison benefits; cards are not mandatory. Keep debt, credit, and usage rights separate. Expired previews must not offer stale effects; unknown transport outcomes must not claim failure or success. These are interaction principles, not approval of another frontend's branding or backend-status assertions.
+- The user accepted organization-selected curated color and heading/body font packages, with logo branding, separate from each user's light/dark/system and accessibility preferences. System semantic status/focus colors remain protected. Arbitrary CSS/colors/custom font uploads are not initial scope. Exact packages, role/permission mapping, storage and API remain pending. Backend needs are recorded in FtkSaaS draft PR https://github.com/SXQHex/FtkSaaS/pull/43; it is not merged or callable implementation.
+- The user explicitly wants shell menu items present before destinations are finalized. Show proposed sections as clearly marked, disabled placeholders until links/content are connected. Mobile uses a bottom menu with More; desktop uses sidebar navigation. This design shell does not assert live permission or plan access.
+
 - Build a modern, distinctive, dark-first SaaS interface. Let the product's primary task determine the layout; do not default to a CRM table shell or repeated metric cards.
 - Use a Turborepo monorepo, pnpm, Next.js, TypeScript, and Tailwind CSS. Use Playwright for browser checks and Vitest for meaningful unit tests.
 - Supabase is the backend-as-a-service and authentication provider. Expo is a future possibility, not a current implementation target.
@@ -15,7 +19,13 @@ description: Project-specific design direction for SaaSPT frontend work, includi
 
 ## Open decisions
 
-The backend product scope covers organizations/centers, students/instructors, scheduling, reservations, attendance, entitlements, finance, and related operations; consult the upstream product contract rather than inventing scope. The first frontend persona and primary task, brand, palette, typography, supported locales, and authentication methods remain to be selected. Do not invent these as settled requirements. Establish the product purpose before designing the first screen. Present a small number of visual directions using representative content, then record the selected direction here.
+The user authorized extending design as far as current contracts support, with later customization. The shell now links to eleven manager design sections plus the daily page; see `docs/design-coverage.md`. Connected design routes replace the earlier disabled menu placeholders. Keep unsupported business writes and missing settings APIs explicitly unconnected. A root AppShell preserves temporary appearance across client navigation, not reload.
+
+23 October 2026: the user selected the center manager's daily program as the first persona and task. The local preview offers Akış, Sahne, and Atölye as unapproved visual directions. See `docs/frontend-start.md` for implementation and verification scope. No brand, locale set, or Auth method has been selected.
+
+The local preview now separates three palette proposals from three system-font proposals and personal light/dark/system mode. Semantic colors and focus are system-owned. Choices are memory-only and reset on reload; this is not an implemented organization settings API or a final distributed font catalog.
+
+The backend product scope covers organizations/centers, students/instructors, scheduling, reservations, attendance, entitlements, finance, and related operations; consult the upstream product contract rather than inventing scope. Brand, palette, typography, supported locales, and authentication methods remain to be selected. Do not invent these as settled requirements. Present a small number of visual directions using representative content, then record the selected direction here.
 
 ## Design workflow
 
