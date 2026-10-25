@@ -145,7 +145,13 @@ test("collection draft does not alter balances and credit stays separate", async
   const before = await table.innerText();
   await page.getByRole("button", { name: "Tahsilat tasarımını aç" }).click();
   const dialog = page.getByRole("dialog", { name: "Manuel tahsilat taslağı" });
+  await dialog
+    .getByRole("checkbox", { name: /Örnek paket satış borcu/ })
+    .check();
   await dialog.getByLabel("Tahsilat tutarı (TRY)").fill("400");
+  await dialog
+    .getByLabel("Tahsilat zamanı (Europe/Istanbul)")
+    .fill("2026-10-24T14:00");
   await dialog
     .getByRole("button", { name: "Tahsilat taslağını incele" })
     .click();
@@ -200,7 +206,9 @@ test("reports respond to selected day and event preparation does not reserve a s
   await page.goto("/etkinlikler");
   await page.getByRole("button", { name: "Kayıt akışını incele" }).click();
   const dialog = page.getByRole("dialog", { name: "Etkinlik kayıt hazırlığı" });
-  await expect(dialog).toContainText("Bu adım yer ayırmaz");
+  await dialog.getByRole("radio", { name: "Elif Aksoy", exact: true }).check();
+  await dialog.getByRole("button", { name: "Kayıt adımını incele" }).click();
+  await expect(dialog).toContainText("Ödeme hazırlığı yer ayırmaz");
   await expect(
     dialog.getByRole("button", { name: /Öde|Onayla ve uygula/ }),
   ).toHaveCount(0);

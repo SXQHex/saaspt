@@ -4,6 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { sessions, type DemoSession } from "./demo-program";
 import { AttendanceDraft } from "./attendance-draft";
+import { ReservationDraft } from "./reservation-draft";
+import {
+  AccountAccessDraft,
+  PersonCreateDraft,
+  PersonEditDraft,
+  StudentRelationDraft,
+  PersonMergeDraft,
+} from "./people-drafts";
+import { ProgramDraft, WaitlistDraft } from "./planning-drafts";
+import { SessionChangeDraft } from "./session-change-draft";
+import {
+  ReservationCancelDraft,
+  AttendanceCorrectionDraft,
+} from "./lesson-record-drafts";
 import { people, money } from "./design-data";
 import {
   useDetailSelection,
@@ -14,7 +28,6 @@ import {
   DetailPrompt,
   StateTag,
   InfoPairs,
-  DesignAction,
 } from "./view-primitives";
 
 export function CalendarView() {
@@ -34,6 +47,9 @@ export function CalendarView() {
   const selected = data.find((item) => item.id === selectedId);
   return (
     <>
+      <div className="view-actions">
+        <ProgramDraft />
+      </div>
       <div className="view-toolbar">
         <FilterButtons
           label="Takvim günü"
@@ -156,23 +172,32 @@ export function CalendarView() {
                 Saatin geçmesi gerçekleşme veya hak tüketimi oluşturmaz.
               </p>
               <AttendanceDraft key={selected.id} title={selected.title} />
-              <DesignAction
-                title="Rezervasyon kontrolü"
-                trigger="Rezervasyon tasarımını incele"
-              >
-                <p>Kişi, seans ve kullanım hakkı birlikte değerlendirilir.</p>
-                <InfoPairs
-                  rows={[
-                    ["Seans", selected.title],
-                    [
-                      "Kontrol edilecekler",
-                      "Canlı kapasite, uygun hak, belge ve katılım koşulları",
-                    ],
-                    ["Kesin sonuç", "Backend doğrulaması bekleniyor"],
-                  ]}
-                />
-                <p>Bu görünüm kontenjan tutmaz ve kayıt oluşturmaz.</p>
-              </DesignAction>
+              <ReservationDraft
+                key={`booking-${selected.id}`}
+                session={selected}
+              />
+              <SessionChangeDraft
+                key={`change-${selected.id}`}
+                session={selected}
+              />
+              <WaitlistDraft key={`wait-${selected.id}`} session={selected} />
+              <details className="lesson-record-examples">
+                <summary>Kayıt ve düzeltme örnekleri</summary>
+                <p className="scope-note">
+                  Ayrı sentetik kayıt senaryolarıdır; bu dersin gerçekleşme veya
+                  kapanış durumu değildir.
+                </p>
+                <div className="draft-actions">
+                  <ReservationCancelDraft
+                    key={`cancel-${selected.id}`}
+                    session={selected}
+                  />
+                  <AttendanceCorrectionDraft
+                    key={`correct-${selected.id}`}
+                    session={selected}
+                  />
+                </div>
+              </details>
             </>
           ) : (
             <DetailPrompt />
@@ -229,6 +254,7 @@ export function PeopleView() {
   return (
     <>
       <div className="view-toolbar">
+        <PersonCreateDraft />
         <ViewSearch label="Kişi ara" value={query} onChange={setQuery} />
         <FilterButtons
           label="Kişi ilişkisi"
@@ -238,7 +264,13 @@ export function PeopleView() {
         />
       </div>
       <div className="view-split">
-        <section className="record-list" aria-label="Kişi listesi">
+        <section
+          id="people-list"
+          data-master-list
+          tabIndex={-1}
+          className="record-list"
+          aria-label="Kişi listesi"
+        >
           {data.map((person) => (
             <button
               className="person-record"
@@ -277,6 +309,7 @@ export function PeopleView() {
         >
           {selected ? (
             <>
+              <ReturnToList targetId="people-list" label="Kişi listesine dön" />
               <span className="large-avatar">{selected.initials}</span>
               <h2>{selected.name}</h2>
               <p>{selected.roles.join(" · ")}</p>
@@ -310,8 +343,29 @@ export function PeopleView() {
                 Hesap ile organizasyona ait kişi kaydı farklıdır. Birden fazla
                 ilişki yeni kişi kaydı oluşturmaz.
               </p>
+              <div className="draft-actions">
+                <PersonEditDraft
+                  key={`edit-${selected.id}`}
+                  person={selected}
+                />
+                <StudentRelationDraft
+                  key={`relation-${selected.id}`}
+                  person={selected}
+                />
+                <AccountAccessDraft
+                  key={`access-${selected.id}`}
+                  person={selected}
+                />
+                <PersonMergeDraft
+                  key={`merge-${selected.id}`}
+                  person={selected}
+                />
+              </div>
               <div className="view-actions">
-                <Link className="button" href="/finans">
+                <Link
+                  className="button"
+                  href={`/finans?person=${encodeURIComponent(selected.id)}`}
+                >
                   Finansı incele
                 </Link>
                 <Link className="button" href="/paketler">

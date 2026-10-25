@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { Button } from "@saaspt/ui/button";
+import { useSearchParams } from "next/navigation";
+import { CollectionDraft } from "./collection-draft";
+import {
+  CashCorrectionDraft,
+  CreditActionDraft,
+  SaleRefundDraft,
+} from "./finance-action-drafts";
+import { EventRegistrationDraft, EventCancelDraft } from "./supporting-drafts";
+import { SaleDraft } from "./sale-draft";
 import { people, products, events, money } from "./design-data";
 import {
   useDetailSelection,
+  ReturnToList,
   ViewSearch,
   FilterButtons,
   EmptyView,
@@ -16,11 +25,32 @@ import {
 } from "./view-primitives";
 
 export function FinanceView() {
+  return (
+    <Suspense fallback={<p role="status">Finans görünümü hazırlanıyor…</p>}>
+      <FinanceFromLink />
+    </Suspense>
+  );
+}
+function FinanceFromLink() {
+  const params = useSearchParams();
+  const requested = params.get("person");
+  const initialId =
+    requested === null
+      ? "person-a"
+      : people.some(
+            (person) =>
+              person.id === requested && person.roles.includes("Öğrenci"),
+          )
+        ? requested
+        : "";
+  return <FinancePanel key={requested ?? "default"} initialId={initialId} />;
+}
+function FinancePanel({ initialId }: { initialId: string }) {
   const [tab, setTab] = useState("Bakiyeler");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("Hepsi");
   const { selectedId, setSelectedId, detailRef } =
-    useDetailSelection("person-a");
+    useDetailSelection(initialId);
   const data = people.filter(
     (person) =>
       person.roles.includes("Öğrenci") &&
@@ -55,7 +85,12 @@ export function FinanceView() {
             />
           </div>
           <div className="view-split">
-            <section>
+            <section
+              id="finance-balances"
+              data-master-list
+              tabIndex={-1}
+              aria-label="Bakiye listesi"
+            >
               <div className="comparison-table-wrap">
                 <table className="comparison-table">
                   <caption>Merkez Stüdyo · Örnek öğrenci bakiyeleri</caption>
@@ -114,6 +149,10 @@ export function FinanceView() {
             >
               {selected ? (
                 <>
+                  <ReturnToList
+                    targetId="finance-balances"
+                    label="Bakiyelere dön"
+                  />
                   <StateTag>Öğrenci bakiyesi</StateTag>
                   <h2>{selected.name}</h2>
                   <div className="balance-grid">
@@ -133,30 +172,11 @@ export function FinanceView() {
                       ["Hareket geçmişi", "Bağlı düzeltmelerle korunur"],
                     ]}
                   />
-                  <CollectionDraft key={selected.id} name={selected.name} />
-                  <DesignAction
-                    title="Alacak ve iade ayrımı"
-                    trigger="Alacak işlemlerini incele"
-                  >
-                    <p>
-                      {selected.name} için örnek alacak:{" "}
-                      {money(selected.credit)}
-                    </p>
-                    <InfoPairs
-                      rows={[
-                        ["Nakit iade", "Açık yetkili ayrı işlem"],
-                        [
-                          "Mahsup",
-                          "Seçili borca, kapsam ve para birimi doğrulanarak",
-                        ],
-                        ["Otomatik işlem", "Yok"],
-                      ]}
-                    />
-                    <p>
-                      İade geçmişi silmez. Bu tasarım tutar kaydetmez veya para
-                      transfer etmez.
-                    </p>
-                  </DesignAction>
+                  <CollectionDraft key={selected.id} person={selected} />
+                  <CreditActionDraft
+                    key={`credit-${selected.id}`}
+                    person={selected}
+                  />
                 </>
               ) : (
                 <DetailPrompt />
@@ -172,75 +192,15 @@ export function FinanceView() {
     </>
   );
 }
-function CollectionDraft({ name }: { name: string }) {
-  const [amount, setAmount] = useState("300");
-  const [note, setNote] = useState("");
-  const [review, setReview] = useState(false);
-  return (
-    <DesignAction
-      title="Manuel tahsilat taslağı"
-      trigger="Tahsilat tasarımını aç"
-    >
-      <p>{name} · Merkez Stüdyo · TRY</p>
-      <form
-        className="draft-form"
-        onSubmit={(event) => {
-          event.preventDefault();
-          setReview(true);
-        }}
-      >
-        <label>
-          Bağlanacak borç
-          <select defaultValue="sale">
-            <option value="sale">Örnek paket satış borcu</option>
-          </select>
-        </label>
-        <label>
-          Tahsilat tutarı (TRY)
-          <input
-            name="collection-amount"
-            type="number"
-            min="0.01"
-            step="0.01"
-            required
-            value={amount}
-            onChange={(event) => {
-              setAmount(event.target.value);
-              setReview(false);
-            }}
-          />
-        </label>
-        <label>
-          Açıklama
-          <textarea
-            name="collection-note"
-            value={note}
-            onChange={(event) => setNote(event.target.value)}
-            placeholder="Örnek tahsilat açıklaması…"
-          />
-        </label>
-        <Button type="submit">Tahsilat taslağını incele</Button>
-      </form>
-      {review ? (
-        <div className="review-summary" role="status">
-          <h3>Kontrol edilecek taslak</h3>
-          <p>
-            {name} · {money(Number(amount))}
-          </p>
-          <p>
-            Bu bir tahsilat makbuzu değildir. Canlı borç, dağıtım ve yetki
-            doğrulanmadı; bakiye değişmedi.
-          </p>
-        </div>
-      ) : null}
-    </DesignAction>
-  );
-}
 function Ledger() {
   return (
     <section className="wide-surface">
       <h2>Geçmiş silinmez.</h2>
       <p>Örnek bağlı hareketler · Elif Aksoy</p>
+      <div className="draft-actions">
+        <CashCorrectionDraft />
+        <SaleRefundDraft />
+      </div>
       <ol className="history-list">
         <li>
           <span>23 Ekim</span>
@@ -324,7 +284,13 @@ export function PackagesView() {
         onChange={setFilter}
       />
       <div className="view-split">
-        <section className="product-list" aria-label="Paket kataloğu">
+        <section
+          id="package-list"
+          data-master-list
+          tabIndex={-1}
+          className="product-list"
+          aria-label="Paket kataloğu"
+        >
           {data.map((item) => (
             <button
               className="product-record"
@@ -350,6 +316,10 @@ export function PackagesView() {
         >
           {selected ? (
             <>
+              <ReturnToList
+                targetId="package-list"
+                label="Paket listesine dön"
+              />
               <StateTag>{selected.kind}</StateTag>
               <h2>{selected.title}</h2>
               <InfoPairs
@@ -365,45 +335,7 @@ export function PackagesView() {
                 Bitiş son kullanım günü değildir; başlangıç dahil, bitiş
                 hariçtir. Para borcu ile kullanım hakkı aynı kayıt değildir.
               </p>
-              <DesignAction
-                title="Paket satış taslağı"
-                trigger="Satış tasarımını incele"
-              >
-                <p>
-                  {selected.title} · Örnek bedel {money(selected.price)}
-                </p>
-                <div className="draft-form">
-                  <label>
-                    Kişi
-                    <select defaultValue="person-a">
-                      {people
-                        .filter((person) => person.roles.includes("Öğrenci"))
-                        .map((person) => (
-                          <option value={person.id} key={person.id}>
-                            {person.name}
-                          </option>
-                        ))}
-                    </select>
-                  </label>
-                  <label>
-                    Başlangıç tarihi
-                    <input type="date" defaultValue="2026-10-24" />
-                  </label>
-                  <label>
-                    Bitiş sınırı
-                    <input type="date" defaultValue="2026-11-24" />
-                  </label>
-                </div>
-                <p>
-                  Gerçek önizleme; kapsam, geçerlilik, borç ve hak etkilerini
-                  backend'den döndürür. Tarihler bu taslakta otomatik
-                  hesaplanmaz.
-                </p>
-                <p className="scope-note">
-                  Satış, dondurma, yenileme ve sonlandırma kendi önizleme/uygula
-                  sözleşmelerine bağlanacak.
-                </p>
-              </DesignAction>
+              <SaleDraft key={selected.id} product={selected} />
             </>
           ) : (
             <DetailPrompt />
@@ -431,7 +363,13 @@ export function EventsView() {
         onChange={setFilter}
       />
       <div className="view-split">
-        <section className="event-list" aria-label="Etkinlik listesi">
+        <section
+          id="event-list"
+          data-master-list
+          tabIndex={-1}
+          className="event-list"
+          aria-label="Etkinlik listesi"
+        >
           {data.map((item) => (
             <button
               className="event-record"
@@ -462,6 +400,10 @@ export function EventsView() {
         >
           {selected ? (
             <>
+              <ReturnToList
+                targetId="event-list"
+                label="Etkinlik listesine dön"
+              />
               <StateTag>{selected.state}</StateTag>
               <h2>{selected.title}</h2>
               <InfoPairs
@@ -478,39 +420,16 @@ export function EventsView() {
                 Etkinliklerde negatif kredi kullanılmaz.
               </p>
               {selected.state === "Yayımlandı" ? (
-                <DesignAction
-                  title="Etkinlik kayıt hazırlığı"
-                  trigger="Kayıt akışını incele"
-                >
-                  <div className="process-steps">
-                    <div>
-                      <strong>Ödeme hazırlığı</strong>
-                      <p>
-                        Tam ödeme şartlı örnekte hazırlık borcu oluşturulur. Bu
-                        adım yer ayırmaz.
-                      </p>
-                    </div>
-                    <div>
-                      <strong>Bağlı borca tahsilat</strong>
-                      <p>
-                        Tahsilat ilgili hazırlık borcuna bağlanır; başka borca
-                        ödeme şartı karşılamaz.
-                      </p>
-                    </div>
-                    <div>
-                      <strong>Kesin kayıt kontrolü</strong>
-                      <p>
-                        Kapasite ve uygunluk yeniden denetlenir. Yer dolmuşsa
-                        kayıt oluşmaz; ilgili parasal düzeltme ve öğrenci
-                        alacağı ayrı sonuçtur.
-                      </p>
-                    </div>
-                  </div>
-                  <p className="scope-note">
-                    Bu ekranda ödeme alınmaz, yer ayrılmaz ve kesin kayıt
-                    oluşturulmaz.
-                  </p>
-                </DesignAction>
+                <div className="draft-actions">
+                  <EventRegistrationDraft
+                    key={`event-register-${selected.id}`}
+                    event={selected}
+                  />
+                  <EventCancelDraft
+                    key={`event-cancel-${selected.id}`}
+                    event={selected}
+                  />
+                </div>
               ) : (
                 <p className="scope-note">
                   Taslak etkinlik, yayımlanmış kayıt akışı gibi sunulmaz.

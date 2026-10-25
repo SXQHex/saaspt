@@ -21,7 +21,29 @@ export function useDetailSelection(initialId: string) {
   return { selectedId, setSelectedId, detailRef };
 }
 
-export function ReturnToList({ targetId }: { targetId: string }) {
+export function useLocalReview() {
+  const [review, setReview] = useState(false);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  function showReview() {
+    setReview(true);
+    requestAnimationFrame(() => {
+      summaryRef.current?.focus({ preventScroll: true });
+      summaryRef.current?.scrollIntoView({
+        block: "nearest",
+        behavior: "instant",
+      });
+    });
+  }
+  return { review, setReview, summaryRef, showReview };
+}
+
+export function ReturnToList({
+  targetId,
+  label = "Ders listesine dön",
+}: {
+  targetId: string;
+  label?: string;
+}) {
   return (
     <button
       type="button"
@@ -32,7 +54,7 @@ export function ReturnToList({ targetId }: { targetId: string }) {
         list?.scrollIntoView({ block: "start", behavior: "instant" });
       }}
     >
-      Ders listesine dön
+      {label}
     </button>
   );
 }

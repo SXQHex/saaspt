@@ -5,6 +5,8 @@ import { Button } from "@saaspt/ui/button";
 import { filterSessions, type DemoSession } from "./demo-program";
 import { ManagerPriorities } from "./manager-priorities";
 import { AttendanceDraft } from "./attendance-draft";
+import { ReservationDraft } from "./reservation-draft";
+import { SessionChangeDraft } from "./session-change-draft";
 import { ReturnToList, useDetailSelection } from "./view-primitives";
 
 function Arrow({ reverse = false }: { reverse?: boolean }) {
@@ -260,7 +262,17 @@ export function ProgramPreview() {
                   ? "Örnek kontenjan dolu."
                   : "Örnek kontenjan bilgisi."}
               </p>
-              <AttendanceDraft key={selected.id} title={selected.title} />
+              <div className="draft-actions">
+                <AttendanceDraft key={selected.id} title={selected.title} />
+                <ReservationDraft
+                  key={`booking-${selected.id}`}
+                  session={selected}
+                />
+              </div>
+              <SessionChangeDraft
+                key={`change-${selected.id}`}
+                session={selected}
+              />
               <div className="integration-note">
                 <span aria-hidden="true">◇</span>
                 <p>

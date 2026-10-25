@@ -10,6 +10,7 @@ export type DemoSession = {
   discipline: string;
   participants: number;
   capacity: number;
+  programTitle?: string;
   state: "completed" | "upcoming";
 };
 export const sessions: DemoSession[] = [
@@ -45,6 +46,7 @@ export const sessions: DemoSession[] = [
     start: "17:00",
     end: "18:00",
     title: "Temelden Salsa",
+    programTitle: "Salsa başlangıç programı (örnek)",
     instructor: "Deniz Kaya",
     room: "A",
     discipline: "Salsa",

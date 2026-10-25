@@ -3,9 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { leads, documents, people, money } from "./design-data";
+import { LeadActivityDraft, LeadConvertDraft } from "./lead-drafts";
+import { DocumentPublishDraft, ReportExportDraft } from "./supporting-drafts";
 import { sessions } from "./demo-program";
 import {
   useDetailSelection,
+  ReturnToList,
   ViewSearch,
   FilterButtons,
   EmptyView,
@@ -39,7 +42,13 @@ export function LeadsView() {
         />
       </div>
       <div className="view-split">
-        <section className="record-list" aria-label="Aday listesi">
+        <section
+          id="lead-list"
+          data-master-list
+          tabIndex={-1}
+          className="record-list"
+          aria-label="Aday listesi"
+        >
           {data.map((item) => (
             <button
               className="lead-record"
@@ -84,6 +93,7 @@ export function LeadsView() {
         >
           {selected ? (
             <>
+              <ReturnToList targetId="lead-list" label="Aday listesine dön" />
               <StateTag>{selected.state}</StateTag>
               <h2>{selected.name}</h2>
               <InfoPairs
@@ -100,22 +110,23 @@ export function LeadsView() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <DesignAction
-                title="Görüşme notu taslağı"
-                trigger="Görüşme tasarımını aç"
-              >
-                <p>{selected.name} · İlişki geçmişine eklenecek not</p>
-                <div className="draft-form">
-                  <label>
-                    Görüşme notu
-                    <textarea placeholder="Ne konuşuldu, sıradaki adım ne…" />
-                  </label>
-                  <label>
-                    Takip tarihi
-                    <input type="date" defaultValue="2026-10-24" />
-                  </label>
-                </div>
-              </DesignAction>
+              <div className="draft-actions">
+                <LeadActivityDraft
+                  key={`activity-${selected.id}`}
+                  lead={selected}
+                />
+                {selected.state === "Açık" ? (
+                  <LeadConvertDraft
+                    key={`convert-${selected.id}`}
+                    lead={selected}
+                  />
+                ) : (
+                  <p className="scope-note">
+                    Dönüşmüş aday için yeni dönüşüm isteği açılmaz; mevcut
+                    geçmiş korunur.
+                  </p>
+                )}
+              </div>
               <p className="scope-note">
                 Dönüşüm kişi geçmişini silmez. Kaynaklar ve notlar sentetiktir;
                 reklam platformu bağlantısı kurulmadı.
@@ -146,7 +157,13 @@ export function DocumentsView() {
         onChange={setFilter}
       />
       <div className="view-split">
-        <section className="document-list" aria-label="Belge listesi">
+        <section
+          id="document-list"
+          data-master-list
+          tabIndex={-1}
+          className="document-list"
+          aria-label="Belge listesi"
+        >
           {data.map((item) => (
             <button
               className="document-record"
@@ -177,6 +194,10 @@ export function DocumentsView() {
         >
           {selected ? (
             <>
+              <ReturnToList
+                targetId="document-list"
+                label="Belge listesine dön"
+              />
               <StateTag>{selected.state}</StateTag>
               <h2>{selected.name}</h2>
               <InfoPairs
@@ -191,6 +212,10 @@ export function DocumentsView() {
                 Yeni sürüm, eski kabul kanıtını değiştirmez. Gereklilik ve
                 yayımlama etkisi işlem öncesinde değerlendirilir.
               </p>
+              <DocumentPublishDraft
+                key={`publish-${selected.id}`}
+                document={selected}
+              />
               <DesignAction
                 title="Belge sürümü önizlemesi"
                 trigger="Sürüm tasarımını incele"
@@ -326,32 +351,7 @@ export function ReportsView() {
         </section>
       )}
       <div className="report-export">
-        <DesignAction
-          title="Rapor dışa aktarım akışı"
-          trigger="Dışa aktarım tasarımını incele"
-        >
-          <p>
-            Gerçek dışa aktarım, yalnız görünür sayfayı değil yetkili ve
-            filtrelenmiş sonuç kapsamını içerir.
-          </p>
-          <div className="process-steps">
-            <div>
-              <strong>Hazırlanıyor</strong>
-              <p>Rapor işi oluşturulur; sonuç iş durumu üzerinden izlenir.</p>
-            </div>
-            <div>
-              <strong>Dosya hazır</strong>
-              <p>
-                Güncel yetki ve kapsam doğrulandıktan sonra dosyaya erişilir.
-              </p>
-            </div>
-            <div>
-              <strong>Erişim değişti</strong>
-              <p>Eski ekran veya dosya bağlantısı yeni yetki vermez.</p>
-            </div>
-          </div>
-          <p>Bu tasarım dosya işi başlatmaz veya hayali dosya indirmez.</p>
-        </DesignAction>
+        <ReportExportDraft />
       </div>
     </>
   );

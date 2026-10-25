@@ -3,6 +3,46 @@
 Tarih: 23 Ekim 2026 (Türkiye).
 Bu belge konuşmadaki kararların ve yapılan işlerin kalıcı özetidir; birebir sohbet transkripti değildir. Yeni kullanıcı talimatları bu özeti güncelleyebilir.
 
+## 25 Ekim — sıralı UX taslakları ve son doğrulama
+
+Kullanıcının açık işleri sırayla sürdürme isteğiyle ders/program/bekleme, finans düzeltmeleri, kişi/aday ve destek akışları ilerletildi. Güncel durum ve bağımlılıklar [sıralı iş listesinde](ux-worklist.md). Buradaki yeni bölüm güncel durumu verir; alttaki tarihli doğrulama sayıları geçmiş aşamalardır.
+
+Sonlu program taslağı tarih aralığı, haftanın günleri, yerel saat/süre ve salonu inceler; gerçek oluşum üretmez. Kapasite alanı kullanıcının yeni sözleşmesini bekler. Bekleme listesine katılma/ayrılma isteği ile süreli yer teklifi ayrı gösterilir; yönetici öğrenci adına teklifi kabul edemez, sahte süre/sıra üretilmez.
+
+Finansta tahsilat düzeltmesi yeni toplam yerine increase/decrease yönünde farktır. Satış iadesi ayrı eski satış örneğine bağlı gerekçeli istek; nakit iade ve borca mahsup ayrı taslaklardır. Sunucu etkileri hesaplanmaz, eski kayıtlar silinmez. Kişiden finans bağlantısı aynı kişiyi korur; bilinmeyen person parametresi başka kişiyi sessizce seçmez. Statik finans sayfasında useSearchParams Suspense sınırındadır.
+
+Kişi oluşturma mükerrer kayıt incelemesi, isteğe bağlı iletişim alanları ve istek özeti içerir; kimlik alanı değişince eski inceleme onayı düşer. Ad düzenleme, öğrenci ilişkisi etkinleştirme/gerekçeli kapatma, kaynak/hedef birleştirme yönü ve hesap erişimi isteği ayrıdır. Gerçek kişi/öğrenci/hesap oluşturma, birleştirme ve e-posta gönderme yoktur. Aday görüşme/takip taslağı durum değiştirmez; dönüşüm mevcut person_id bağını korur ve yalnız açık adaya sunulur.
+
+Etkinlik ödeme hazırlığı, kesin kayıt kontrolü ve yer doldu örneği ayrıldı; merkez iptali gerekçeli taslaktır. Belge yayımlama yalnız seçilen dosya adını gösterir, yükleme yapmaz; sürüm/gereklilik adımları/yenilenmiş kabul ayrıdır. Son gereklilik kaldırılırsa yenilenmiş kabul seçimi temizlenir. Rapor filtre/tarih/CSV isteği ve yerel iş durumu senaryoları var; sahte dosya indirtilmez. Kişi, aday, paket, etkinlik, belge ve finans mobil ayrıntılarında odakla listeye dönüş sağlandı.
+
+Kaynak kontrolü: yayımlanmış operations.ts/generated.ts, program/yoklama devirleri ve P03 finans devri. generated.ts 25 Ekim'de GitHub main üzerinden yeniden okundu; settings runtime/DTO geliştirmesinin durdurulması korunur. Yerel modeller API DTO'su değildir. Sunucu kapasite/yetki/kimlik/hak/finans kararı istemcide taklit edilmez.
+
+Son doğrulama: production build, typecheck, 86 Playwright ve 5 Vitest testi geçti. Yedi yeni panel 390px/1440px'te toplam 14 ekran görüntüsüyle incelendi; diyalog yatay taşması görülmedi. Bu kontroller tam erişilebilirlik veya canlı backend kabulü değildir. Kod ve doküman değişiklikleri codex/frontend-start dalında henüz commit/push edilmedi; önceki PR1 merge durumu değişmedi. Yeni kapasite sözleşmesi, gerçek Auth/API, kesin marka/dil ve ayrı persona kapsamları açık kalır.
+
+## 24 Ekim — ikinci öncelik: paket satışı ve tahsilat
+
+Kullanıcının devam isteğiyle kapasite alanları beklemede tutularak kabul edilen ikinci sıraya geçildi. Paket satış taslağı ayrı SaleDraft bileşenine alındı: öğrenci arama/seçimi, iki açık tarih, başlangıç dahil/bitiş hariç kontrolü ve satış isteği özeti. Tarihler otomatik hesaplanmaz; öğrenci veya paket değişince eski seçimler korunmaz. Örnek katalog fiyatı kesin borç/ödeme değildir; gerçek preview/apply bağlantısı kurulmadı.
+
+Manuel tahsilat taslağı ayrı CollectionDraft bileşenine alındı. Kişiye bağlı birden fazla örnek borç checkbox ile seçilir; tutar, gerçekleşme yerel zamanı ve açıklama incelenir. Bu örnek akış seçili borca bağlı tahsilatla sınırlıdır; borçsuz tahsilatın ürün genelinde yasak olduğu iddia edilmez. Seçili borç toplamını aşan tutarda yalnız uyarı gösterilir; dağıtım/alacak/iade sonucu türetilmez. Alan veya borç seçimi değişince özet kaldırılır. Gerçek kayıt/makbuz/mahsup yoktur.
+
+Yerel TRY tutar girişi, virgül/nokta ve en çok iki kuruş basamağını BigInt ile tam minor birime çevirir; sıfır/negatif/gruplu/bilimsel/fazla ondalıklı değerler reddedilir. Gösterim büyük değerlerde de kuruş hassasiyetini korur. Bu yardımcı API DTO'su değildir. RequestSalePreview, RequestSaleApply, RequestCollectionRecord ve P03 devir notları esas alındı; tahsilat için uydurma preview endpoint'i eklenmedi.
+
+Doğrulama: production build, tip kontrolü, 66 tarayıcı testi ve 5 birim testi geçti. Mobil/masaüstü kontrol özetleri görsel incelendi. Değişiklikler önceki yerel akışlarla birlikte henüz commit edilmedi. Gerçek satış etkileri, tahsilat dağıtımı, düzeltme/iade, canlı stale/replay/sonuç-bilinmiyor kabulü ve üçüncü sıradaki kişi/aday UX işleri açık.
+
+## 24 Ekim — ders değişikliği ve yeni kapasite kararı
+
+Günlük/takvim ayrıntılarına gerekçeli saat/tarih/salon değişikliği taslağı eklendi. Başlangıç ve bitiş tarihleri ayrı; geceyi aşan dersler için bitiş sonraki güne alınabilir. Tarihler merkez yerel saat önerisidir; DST/UTC/çakışma/yetki/rezervasyon uygunluğu gerçek önizleme olmadan doğrulanmış sayılmaz. Yalnız bu ders veya programa bağlı örnekte bu ve sonraki açık oluşumlar kapsamı gösterilir; gerçek etkilenen seri listesi üretilmez. Program bağı yalnız sentetik demo-3 örneğine açıklamalı eklendi. Tekil ders seri seçemez. Özet sadece değişen alanları karşılaştırır; düzenleme eski özeti kaldırır, geri alma taslağı temizler.
+
+Kullanıcı oda kapasitesinden bağımsız seans kontenjanı istedi: 50 kişilik odada toplam 30 veya 10 erkek + 10 kadın örnekleri. Nominal/azami ile ilişkisine "Bu ilişkiyi sözleşmede ayrıca netleştireceğiz" cevabı verdi. Bu nedenle yeni formdaki nominal/azami kapasite düzenlemesi kaldırıldı, salt okunur kapasite modeli örnekleri kondu. Backend alanları, cinsiyet kimliği/kota eşlemesi, boş kontenjan devri, toplam/alt limit ilişkisi veya sınırsız kapasite davranışı uydurulmadı. Yeni sözleşme sonrası bu eşleme yeniden ele alınacak; saat/salon UX devamı bundan bağımsızdır.
+
+Production derlemesi, 60 tarayıcı testi ve iki birim testi geçti; tip kontrolü başarılı. Yeni değişiklikler yerelde ve henüz commit edilmedi.
+
+## 24 Ekim — kabul edilen UX sırası ve ilk akışlar
+
+Kullanıcı ders–rezervasyon–yoklama → paket satışı–tahsilat → kişi–aday sırasını kabul edip başlamamızı istedi. Yayımlanmış operations/generated tipleri ve ilgili program/yoklama devirleri yeniden okundu. Günlük ve takvimde ortak rezervasyon taslağı; takvimde ayrı sentetik aktif rezervasyon iptali ve kapanmış yoklama düzeltme örnekleri eklendi. Kişi/hak/tür seçimleri, gerekçe, eski/yeni sonuç ve odaklı kontrol özetleri var; gerçek kayıt veya frontend hak/finans hesabı yok. Detay ve açık ilk-aşama işleri docs/design-coverage.md içinde tutulur. Mobil kaydırmada işlem kapatma başlığı sabittir; adım değişiminde ders bağlamı korunur.
+
+Önceki frontend değişiklikleri PR1 üzerinden bec7e20 main commit'ine merge edildi. Yeni ders/rezervasyon/yoklama UX değişiklikleri yerelde, henüz commit edilmedi. Bu aşamada production build, tip kontrolü ve 55 tarayıcı testi geçti; mobil/masaüstü görseller incelendi.
+
 ## 24 Ekim — ayarlar UX devamı
 
 Kullanıcı sözleşmeler kapsamında UX'e devam edilmesini istedi. Backend kaynak indeksi, güncel devir, kalan işler, Claude devri ve teknik sözleşmenin ayarlar bölümü GitHub main'den yeniden okundu. Yeni settings API/DTO/runtime geliştirmesinin durdurulması korunur; görünüm prototipi ve gerçek kayıt ayrı tutulur.
